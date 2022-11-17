@@ -64,19 +64,20 @@ if __name__ == '__main__':
 
 
     tf_keras_model = tf.keras.models.load_model(keras_checkpoint_path, compile=False)
+    print(tf_keras_model.summary())
     tf_weights = tf_keras_model.get_weights()
-    weights = keras_to_pytorch(tf_keras_model)
+    keras_weights_dict = keras_to_pytorch(tf_keras_model)
 
-    values = list(weights.values())
-    print(len(values))
+    values = list(keras_weights_dict.values())
+    # print(len(values))
     i = 0
     for name, param in pytorch_model.named_parameters():
         if 'conv' in name:
             param.data = torch.tensor(values[i])
-            print(i, name)
+            # print(i, name)
             i += 1
 
     torch.save(pytorch_model.state_dict(), pytorch_checkpoint_path)
 
     pytorch_model.load_state_dict(torch.load(pytorch_checkpoint_path))
-    print(pytorch_model)
+    # print(pytorch_model)
